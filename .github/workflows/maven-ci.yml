@@ -1,0 +1,33 @@
+name: "Reusable Maven CI"
+
+on:
+  workflow_call:
+    inputs:
+      java-version:
+        required: true
+        type: string
+      run-tests:
+        required: false
+        type: boolean
+        default: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: ${{ inputs.java-version }}
+
+      - name: Build with Maven
+        run: mvn -B clean install
+
+      - name: Run tests
+        if: ${{ inputs.run-tests }}
+        run: mvn test
